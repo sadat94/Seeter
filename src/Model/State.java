@@ -11,6 +11,6 @@ package Model;
  */
 public enum State {
     
-    MAIN, DRAFTING;
+    MAIN, DRAFTING, EXIT;
     
 }
