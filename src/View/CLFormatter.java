@@ -15,7 +15,7 @@ public class CLFormatter {
 
   static ClientChannel chan;  // Client-side channel for talking to a Seeter server
 
-  CLFormatter(String host, int port) {
+  public CLFormatter(String host, int port) {
     this.chan = new ClientChannel(host, port);
   }
 
@@ -30,6 +30,12 @@ public class CLFormatter {
   }
 
   /* Following are the auxiliary methods for formatting the UI text */
+  
+  
+   public static String formatWelcome() {
+        return "\nWelcome!\n"
+                + "Please provide your userName";
+    }
 
   static String formatSplash(String user) {
     return "\nHello " + user + "!\n"
@@ -37,7 +43,7 @@ public class CLFormatter {
         + "e.g., fe [mytopic].\n";
   }
 
-  static String formatMainMenuPrompt() {
+  public static String formatMainMenuPrompt() {
     return "\n[Main] Enter command: "
         + "fetch [mytopic], "
         + "compose [mytopic], "
@@ -45,7 +51,7 @@ public class CLFormatter {
         + "\n> ";
   }
 
-  static String formatDraftingMenuPrompt(String topic,
+  public static String formatDraftingMenuPrompt(String topic,
       List<String> lines) {
     return "\nDrafting: " + formatDrafting(topic, lines)
         + "\n[Drafting] Enter command: "
@@ -55,7 +61,7 @@ public class CLFormatter {
         + "\n> ";
   }
 
-  static String formatDrafting(String topic, List<String> lines) {
+  public static String formatDrafting(String topic, List<String> lines) {
     StringBuilder b = new StringBuilder("#");
     b.append(topic);
     int i = 1;
@@ -68,7 +74,7 @@ public class CLFormatter {
     return b.toString();
   }
 
-  static String formatFetched(String topic, List<String> users,
+  public static String formatFetched(String topic, List<String> users,
       List<String> fetched) {
     StringBuilder b = new StringBuilder("Fetched: #");
     b.append(topic);
@@ -82,4 +88,10 @@ public class CLFormatter {
     b.append("\n");
     return b.toString();
   }
+
+    public static ClientChannel getChan() {
+        return chan;
+    }
+  
+  
 }

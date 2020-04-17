@@ -3,15 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package View;
-
+package Controller;
 /**
  *
  * @author ss15a
  */
-public enum commandWords {
-    
-    EXIT,
-    
-    COMPOSE;
+public interface Command {
+    boolean execute();  
 }
