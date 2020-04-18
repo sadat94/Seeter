@@ -11,15 +11,15 @@ package Controller;
  */
 public class SendSeet implements Command {
     
-    private AllCommandInvoker invoker;
+    private final AllCommandImplementer implementer;
     
-    public SendSeet(AllCommandInvoker invoker) {
-        this.invoker = invoker;
+    public SendSeet(AllCommandImplementer implementer) {
+        this.implementer = implementer;
     }
 
-    @Override
+    @Override //Command
     public boolean execute() {
-        return invoker.send();
+        return implementer.send();
     }
     
 }

@@ -71,7 +71,7 @@ public class Client {
 
     public Client() {
        
-        controller = new AllCommandImplementer(this);
+        controller = new AllCommandImplementer(this, helper, user);
         registerCommands();
     }
 

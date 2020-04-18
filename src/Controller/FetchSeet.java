@@ -10,15 +10,15 @@ package Controller;
  * @author ss15a
  */
 public class FetchSeet implements Command{
-    private AllCommandInvoker invoker;
+    private AllCommandImplementer implementer;
     
-     public FetchSeet(AllCommandInvoker invoker) {
-        this.invoker = invoker;
+     public FetchSeet(AllCommandImplementer implementer) {
+        this.implementer = implementer;
     }
     
     @Override
     public boolean execute() {
-        return invoker.fetch();
+        return implementer.fetch();
     }
     
 }

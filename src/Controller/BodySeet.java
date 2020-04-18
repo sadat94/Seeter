@@ -12,15 +12,15 @@ package Controller;
 public class BodySeet implements Command {
     
     
-    private AllCommandInvoker invoker;
+    private AllCommandImplementer implementer;
     
-    public BodySeet(AllCommandInvoker invoker) {
-        this.invoker = invoker;
+    public BodySeet(AllCommandImplementer implementer) {
+        this.implementer = implementer;
     }
 
     @Override
     public boolean execute() {
-        return invoker.body();
+        return implementer.body();
     }
     
 }

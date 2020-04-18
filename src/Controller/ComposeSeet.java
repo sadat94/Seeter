@@ -11,15 +11,15 @@ package Controller;
  */
 public class ComposeSeet implements Command {
     
-    private AllCommandInvoker invoker;
+    private AllCommandImplementer implementer;
     
-     public ComposeSeet(AllCommandInvoker invoker) {
-        this.invoker = invoker;
+     public ComposeSeet(AllCommandImplementer implementer) {
+        this.implementer = this.implementer;
     }
 
     @Override
     public boolean execute() {
-        return invoker.compose();
+        return implementer.compose();
     }
     
 }
