@@ -14,7 +14,7 @@ public class ComposeSeet implements Command {
     private AllCommandImplementer implementer;
     
      public ComposeSeet(AllCommandImplementer implementer) {
-        this.implementer = this.implementer;
+        this.implementer = implementer;
     }
 
     @Override

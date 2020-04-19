@@ -26,15 +26,11 @@ public class UserInput {
      * @return The command word.
      */
     public String getFirstWord() throws IOException {
-
-        List<String> list = processCommand();
-        return list.remove(0);
-
+        return processWord(0);
     }
 
     public String getSecondWord() throws IOException {
-        String[] str = processSecondWord();
-        return str[0];
+        return processWord(1);
     }
 
     public String[] getMessageWord() throws IOException {
@@ -43,9 +39,12 @@ public class UserInput {
         return list.toArray(new String[list.size()]);
     }
     
-    public String[] processSecondWord() throws IOException {
-        List<String> list = processCommand();
-        return list.toArray(new String[list.size()]);
+    public String processWord(int index) throws IOException {
+     
+        if(input ==  null || index >= input.split(" ").length){
+            return null;
+        }
+        return input.split(" ")[index];
     }
 
     public List processCommand() throws IOException {

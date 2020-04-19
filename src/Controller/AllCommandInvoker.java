@@ -5,19 +5,7 @@
  */
 package Controller;
 import Model.AppSeet;
-import Model.User;
-import Model.UserInput;
-import View.CLFormatter;
-import View.SeetDraftDatabase;
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
-import sep.seeter.net.channel.ClientChannel;
-import sep.seeter.net.message.Publish;
-import sep.seeter.net.message.SeetsReply;
-import sep.seeter.net.message.SeetsReq;
 
 /**
  *
@@ -32,19 +20,22 @@ public class AllCommandInvoker {
 //    private CLFormatter clFormatter;
 //    private User user;
 //    private SeetDraftDatabase seetDatabase;
-//    private AppSeet seet;
+    private AppSeet seet;
     
-    public AllCommandInvoker(CLFormatter formatter, User user) {
+    public AllCommandInvoker(AllCommandImplementer allCommandImpl) {
+        
+        implementer = allCommandImpl;
+        
   //      clFormatter = formatter;
     //    this.user = user;
        // seetDatabase = new SeetDraftDatabase();
     }
    
-    public void addCommands(String commandKeyName, Command commandValue) {
-        
-        allCommandsMap.put(commandKeyName, commandValue);
-        
-    }
+//    public void addCommands(String commandKeyName, Command commandValue) {
+//        
+//        allCommandsMap.put(commandKeyName, commandValue);
+//        
+//    }
     
     public boolean runCommands(String commandKeyName) {
         
@@ -59,56 +50,105 @@ public class AllCommandInvoker {
             return commandValue.execute();     
     }
     
-    public void commandRegister() {
-        
-        Command sendCommand = new SendSeet(implementer);
-        Command fetchCommand = new FetchSeet(implementer);
-        Command composeCommand = new ComposeSeet(implementer);
-        Command bodyCommand = new BodySeet(implementer);
-        
-        
-        addCommands("send", sendCommand);
-        addCommands("fetch", fetchCommand);
-        addCommands("compose", composeCommand);
-        addCommands("body", bodyCommand);
-        
-        
+    public void addAppCommands() {
+       allCommandsMap.put("fetch", (Command) new FetchSeet(implementer));
+       allCommandsMap.put("compose", (Command) new ComposeSeet(implementer) );
+       allCommandsMap.put("body", (Command) new BodySeet(implementer));
+       allCommandsMap.put("send", (Command) new SendSeet(implementer));
+    }
+    
+//    public void commandRegister() {
+//        
+//        Command sendCommand = new SendSeet(implementer);
+//        Command fetchCommand = new FetchSeet(implementer);
+//        Command composeCommand = new ComposeSeet(implementer);
+//        Command bodyCommand = new BodySeet(implementer);
+//        
+//        
+//        addCommands("send", sendCommand);
+//        addCommands("fetch", fetchCommand);
+//        addCommands("compose", composeCommand);
+//        addCommands("body", bodyCommand);
+//        
+//        
         //OR USING LAMBA ::
         
-        Command send = implementer::send;
-        Command fetch = implementer::fetch;
-        Command compose = implementer::compose;
-        Command body = implementer::body;
+//        Command send = implementer::send;
+//        Command fetch = implementer::fetch;
+//        Command compose = implementer::compose;
+//        Command body = implementer::body;
+//        
+//         
+//        addCommands("send", send);
+//        addCommands("fetch", fetch);
+//        addCommands("compose", compose);
+//        addCommands("body", body);
         
-         
-        addCommands("send", send);
-        addCommands("fetch", fetch);
-        addCommands("compose", compose);
-        addCommands("body", body);
-        
-    }
     
     
-    public void commandGetRunner() {
-        
-        runCommands("send");
-        runCommands("fetch");
-        runCommands("compose");
-        runCommands("body");
-        
-    }
+    
+    //USING runCommands method
+    
+//    public void runCommandsGet() {
+//        
+//        runCommands("send");
+//        runCommands("fetch");
+//        runCommands("compose");
+//        runCommands("body");
+//        
+//    }
     
     
-    public Command getCommand(String command) {
-        
-        Command newCommand = allCommandsMap.get(command);
-        
-        if (allCommandsMap.containsKey(command) {
-            
-            co
-        }
-        
-    }
+    //OR USING executeCommands method
+    
+//    public void executeCommandsGet() {
+//        
+//        executeCommands("send");
+//        executeCommands("fetch");
+//        executeCommands("compose");
+//        executeCommands("body");
+//        
+//    }
+    
+    
+//    public String listEverything() {
+//        
+//        String list = "";
+//        for (String a : allCommandsMap.keySet()) {
+//            list += a + " ";
+//        }
+//        return list;
+//    }
+//    
+    
+    //Alternative to runCommands method declared above
+    
+//    public boolean executeCommands(UserInput commandName) throws IOException {
+//        
+//        String commandWord = commandName.getFirstWord();
+//        String secondWord = commandName.getSecondWord();
+//        String [] message = commandName.getMessageWord();
+//        
+//      //  Command command = allCommandsMap.get(commandName);
+//        
+//        if (allCommandsMap.containsKey(commandName)) {
+//        
+//         //   command.execute();
+//            
+//            seet = new AppSeet(secondWord, message);
+//            runCommands(commandWord);
+//       
+//        }
+//        
+//     //   else   
+//            
+//       //      System.out.println("Invalid Command, please enter a valid one"); 
+//
+//        return true; //allCommandsMap.get(commandName);
+//      
+//      //return true;
+//        
+//    }
     
     
 
@@ -116,12 +156,7 @@ public class AllCommandInvoker {
       //  return allCommandsMap;
     //}
     
-//    public void addAppCommands() {
-//       allCommandsMap.put("fetch", (Command) new FetchSeet(this));
-//       allCommandsMap.put("compose", (Command) new ComposeSeet(this) );
-//       allCommandsMap.put("body", (Command) new BodySeet(this));
-//       allCommandsMap.put("send", (Command) new SendSeet(this));
-//    }
+    
     
 //    public void menuPrinter(Boolean state) { 
 //        if(state == true){
@@ -131,74 +166,11 @@ public class AllCommandInvoker {
 //        }
 //    }
 //    
-//    public boolean processCommand(UserInput command) throws IOException{
-//        String commandWord = command.getFirstWord();
-//        String secondWord = command.getSecondWord();
-//        String [] message = command.getMessageWord();
-//        
-//        if(commandWord.equals("exit")) {
-//            System.exit(0);
-//        }
-//        
-//        if(!getAllCommandsMap().containsKey(commandWord)) {
-//            System.out.println("No command recognised");
-//        }
-//        
-//        seet = new AppSeet(secondWord, message);
-//        return runCommands(commandWord);
-//    }
-//  
-//    public boolean fetch() {
-//        ClientChannel chan = clFormatter.getChan();
-//        String title = seet.getTitle();
-//
-//        try {
-//          chan.send(new SeetsReq(title));
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        SeetsReply rep = null;
-//        try {
-//            rep = (SeetsReply) chan.receive();
-//        } catch (IOException | ClassNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//        System.out.print(
-//                CLFormatter.formatFetched(title, rep.users, rep.lines));
-//
-//        return true;
-//    }
-//
-//    public boolean compose() {
-//        String title = seet.getTitle();
-//        seetDatabase.setDraftTopic(title);
-//        return false;
-//    }
-//
-//    public boolean body() {
-//        String line = Arrays.stream(seet.getMessage()).
-//                collect(Collectors.joining());
-//        seetDatabase.getDraftLines().add(line);
-//
-//        return false;
-//    }
-//
-//    public boolean send() {
-//
-//        ClientChannel chan = clFormatter.getChan();
-//        String draftTopic = seetDatabase.getDraftTopic();
-//        String userId = user.getName();
-//        List<String> msgList = seetDatabase.getDraftLines();
-//
-//        try {
-//            chan.send(new Publish(userId, draftTopic, msgList));
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        seetDatabase.setDraftTopic(null);
-//        return true;
-//    }
+   
+   
+    public HashMap<String, Command> getAllCommandsMap() {
+        return allCommandsMap;
+    }
 
     
     

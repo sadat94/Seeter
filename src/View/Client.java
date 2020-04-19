@@ -3,6 +3,9 @@ package View;
 
 import Controller.AllCommandImplementer;
 import Controller.AllCommandInvoker;
+import Controller.Command;
+import Model.User;
+import Model.UserInput;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import sep.seeter.net.message.Bye;
@@ -63,34 +66,36 @@ public class Client {
     private String host;
     private int port;
     
+    private User user1;
     
-    private static AllCommandImplementer controller;
+    private static AllCommandInvoker invoker;
+    private static AllCommandImplementer implementer;
     private CLFormatter helper = null;
     boolean printSplash = true;
 
 
     public Client() {
        
-        controller = new AllCommandImplementer(this, helper, user);
+        implementer = new AllCommandImplementer(this);
         registerCommands();
     }
 
 
     public static void main(String[] args) throws IOException {
         Client client = new Client();
-        String nUserId = controller.getUser().getName();
-        String nHost = controller.getUser().getHost();
-        int nPort = controller.getUser().getPort();
+        String nUserId = implementer.getUser().getName();
+        String nHost = implementer.getUser().getHost();
+        int nPort = implementer.getUser().getPort();
 
         client.set(nUserId, nHost, nPort);
-        client.run();
+        client.run();     
+        
     }
 
     public void set(String user, String host, int port) {
         this.user = user;
         this.host = host;
         this.port = port;
-        this.helper = controller.getFormatter();
     }
 
     // Run the client
@@ -99,31 +104,30 @@ public class Client {
             justification = "When reading console, ignore default encoding warning")
 
     void run() throws IOException {
-        try {
-
-            printSplash();
-
-            loopHandler();
-
-        } catch (IOException | ClassNotFoundException ex) {
-            throw new RuntimeException(ex);
-        } finally {
-            if (helper.getChan().isOpen()) {
-                // If the channel is open, send Bye and close
-                helper.getChan().send(new Bye());
-                helper.getChan().close();
+        
+        boolean finished = false;
+        boolean state = true;
+        printSplash();
+        
+        while (!finished) {
+            try {
+               implementer.menuPrinter(state);
+               UserInput userCommand = implementer.getReader().getCommand();
+               state = implementer.processCommand(userCommand);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+        }
+        
+        if (implementer.getFormatter().getChan().isOpen()) {
+            // If the channel is open, send Bye and close
+            implementer.getFormatter().getChan().send(new Bye());
+            implementer.getFormatter().getChan().close();
         }
     }
 
-    void loopHandler() throws IOException, ClassNotFoundException {
-        //controller.loop();
-        
-        controller.loop();
-    }
-
     public void printSplash() {
-        System.out.print(CLFormatter.formatSplash(controller.getUser().getName()));
+        System.out.print(CLFormatter.formatSplash(implementer.getUser().getName()));
     }
 
     public void inputUser () {
@@ -131,212 +135,12 @@ public class Client {
     }
 
     public void registerCommands() {
-       // controller.addAppCommands();
        
-       controller.getInvoker().addAppCommands();
-        
+       implementer.getInvoker().addAppCommands();    
     }
+    
 }
 
 
     
-    
-    
-//
-//  String user;
-//  String host;
-//  int port;
-//  
-//
-//  boolean printSplash = true;
-//  
-//  private static AllCommandImplementer commandImplementer;
-//
-//  Client() { 
-//      commandImplementer = new AllCommandImplementer(this);
-//  }
-//
-//  public static void main(final String[] args) throws IOException {
-////    String user = args[0];
-////    String host = args[1];
-////    int port = Integer.parseInt(args[2]);
-////    Client client = new Client();
-////    client.set(user, host, port);
-////    allCommandReceiver.populateCommand();
-////    client.run();
-//
-//      Client client = new Client();
-//      String nUserId = commandImplementer.
-//      String nHost = commandImplementer.getUser().getName();
-//      int nPort = commandImplementer.getUser().getName();
-//
-//      client.set(nUserId, nHost, nPort);
-//      client.run();
-//  
-//  }
-//
-//  public void set(String user, String host, int port) {
-//    this.user = user;
-//    this.host = host;
-//    this.port = port;
-//  }
-//
-//  // Run the client
-//  @SuppressFBWarnings(
-//      value = "DM_DEFAULT_ENCODING",
-//      justification = "When reading console, ignore default encoding warning")
-//  void run() throws IOException {
-//
-//    BufferedReader reader = null;
-//    CLFormatter helper = null;
-//    try {
-//      reader = new BufferedReader(new InputStreamReader(System.in));
-//
-//      if (this.user.isEmpty() || this.host.isEmpty()) {
-//        System.err.println("User/host has not been set.");
-//        System.exit(1);
-//      }
-//      helper = new CLFormatter(this.host, this.port);
-//
-//      if (this.printSplash = true);
-//      {
-//        System.out.print(helper.formatSplash(this.user));
-//      }
-//      loop(helper, reader);
-//    } catch (Exception ex) {
-//      throw new RuntimeException(ex);
-//    } finally {
-//      reader.close();
-//      if (helper.chan.isOpen()) {
-//        // If the channel is open, send Bye and close
-//        helper.chan.send(new Bye());
-//        helper.chan.close();
-//      }
-//    }
-//  }
-//  
-//  
-//   public void inputUser () {
-//        System.out.println(CLFormatter.formatWelcome());
-//    }
-//
-//// Main loop: print user options, read user input and process
-//  void loop(CLFormatter helper, BufferedReader reader) throws IOException,
-//      ClassNotFoundException {
-//    
-//       
-//
-//    // Holds the current draft data when in the "Drafting" state
-//    String draftTopic = null;
-//    List<String> draftLines = new LinkedList<>();
-//   
-//    // The loop
-//    for (boolean done = false; !done;) {
-//        
-//        
-//        if (state == AppState.MAIN) {
-//        System.out.print(helper.formatMainMenuPrompt());
-//      } else {  // state = "Drafting"
-//        System.out.print(helper.
-//            formatDraftingMenuPrompt(draftTopic, draftLines));
-//      }
-//        
-//        
-//        // Read input from user
-//        String raw = reader.readLine();
-//        
-//        // Instantiate useInput with the String
-//        userInput = new UserInput(raw);
-//        
-//        
-//        // Get the command word form user input
-//        String cmd = userInput.getCommandWord();
-//        
-//        state = processCommand(cmd);
-//        
-//   
-        
-
-      // Print user options
-//      if (state.equals("Main")) {
-//        System.out.print(helper.formatMainMenuPrompt());
-//      } else {  // state = "Drafting"
-//        System.out.print(helper.
-//            formatDraftingMenuPrompt(draftTopic, draftLines));
-//      }
-
-//      // Read a line of user input
-//      String raw = reader.readLine();
-//      if (raw == null) {
-//        throw new IOException("Input stream closed while reading.");
-//      }
-//      // Trim leading/trailing white space, and split words according to spaces
-//      List<String> split = Arrays.stream(raw.trim().split("\\ "))
-//          .map(x -> x.trim()).collect(Collectors.toList());
-//      String cmd = split.remove(0);  // First word is the command keyword
-//      String[] rawArgs = split.toArray(new String[split.size()]);
-//      // Remainder, if any, are arguments
-//
-//      
-//      
-//      
-//      
-//      
-//      
-//      
-//      
-//      // Process user input
-//      if ("exit".startsWith(cmd)) {
-//        // exit command applies in either state
-//        done = true;
-//      } // "Main" state commands
-//      else if (state.equals("Main")) {
-//        if ("compose".startsWith(cmd)) {
-//          // Switch to "Drafting" state and start a new "draft"
-//          state = "Drafting";
-//          draftTopic = rawArgs[0];
-//        } else if ("fetch".startsWith(cmd)) {
-//          // Fetch seets from server
-//          helper.chan.send(new SeetsReq(rawArgs[0]));
-//          SeetsReply rep = (SeetsReply) helper.chan.receive();
-//          System.out.print(
-//              helper.formatFetched(rawArgs[0], rep.users, rep.lines));
-//        } else {
-//          System.out.println("Could not parse command/args.");
-//        }
-//      } // "Drafting" state commands
-//      else if (state.equals("Drafting")) {
-//        if ("body".startsWith(cmd)) {
-//          // Add a seet body line
-//          String line = Arrays.stream(rawArgs).
-//              collect(Collectors.joining());
-//          draftLines.add(line);
-//        } else if ("send".startsWith(cmd)) {
-//          // Send drafted seets to the server, and go back to "Main" state
-//          helper.chan.send(new Publish(user, draftTopic, draftLines));
-//          state = "Main";
-//          draftTopic = null;
-//        } else {
-//          System.out.println("Could not parse command/args.");
-//        }
-//      } else {
-//        System.out.println("Could not parse command/args.");
-//      }
-//    }
-//    return;
-//    }
-//    
-//  }
-//
-//   
-//  public AppState processCommand(String command) {
-//      
-//      allCommandInvoker = allCommandReceiver.getCommandInvoker();
-//  
-//      if (!allCommandInvoker.getAllCommandsMap().containsKey(command)) {
-//            System.out.println("Invalid Command");
-//       }
-//
-//      return allCommandInvoker.runCommands(command);
-//  }
 

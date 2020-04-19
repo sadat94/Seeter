@@ -10,7 +10,7 @@ import Model.UserInput;
 import View.CLFormatter;
 import View.Client;
 import View.Reader;
-import View.SeetDraftDatabase;
+import Model.SeetDraftDatabase;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -35,102 +35,57 @@ public class AllCommandImplementer {
     private SeetDraftDatabase seetDatabase;
  
 
-    public AllCommandImplementer (Client newClient, CLFormatter clFormatter, User user) {
+    public AllCommandImplementer (Client newClient) {
         client = newClient;
-        formatter = clFormatter;
-        this.user = user;
         seetDatabase = new SeetDraftDatabase();
         reader = new Reader();
         setCLFormatter();
-        invoker = new AllCommandInvoker(formatter, user);
-    }
-
+        invoker = new AllCommandInvoker(this);
+    } 
     
-    
-    
-    
-    
-        public void menuPrinter(Boolean state) { 
+    public void menuPrinter(Boolean state) { 
         if(state == true){
             System.out.print(CLFormatter.formatMainMenuPrompt());
         }else if(state == false){
             System.out.println(CLFormatter.formatDraftingMenuPrompt(seetDatabase.getDraftTopic(),seetDatabase.getDraftLines()));
         }
     }
-    
-    public boolean processCommand(UserInput command) throws IOException{
-        String commandWord = command.getFirstWord();
-        String secondWord = command.getSecondWord();
-        String [] message = command.getMessageWord();
-        
-        if(commandWord.equals("exit")) {
-            System.exit(0);
-        }
-        
-        if(!invoker.getAllCommandsMap().containsKey(commandWord)) {
-            System.out.println("No command recognised");
-        }
-        
-        seet = new AppSeet(secondWord, message);
-        return invoker.runCommands(commandWord);
-    }
   
-    public boolean fetch() {
-        ClientChannel chan = formatter.getChan();
-        String title = seet.getTitle();
-
-        try {
-          chan.send(new SeetsReq(title));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public boolean fetch() throws IOException, ClassNotFoundException {
+        ClientChannel clientChannel = formatter.getChan();
+        clientChannel.send(new SeetsReq(seet.getTitle()));
         SeetsReply rep = null;
-        try {
-            rep = (SeetsReply) chan.receive();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        System.out.print(
-                CLFormatter.formatFetched(title, rep.users, rep.lines));
+        rep = (SeetsReply) clientChannel.receive();
+        System.out.print(CLFormatter.formatFetched(seet.getTitle(), rep.users, rep.lines));
 
         return true;
     }
 
     public boolean compose() {
-        String title = seet.getTitle();
-        seetDatabase.setDraftTopic(title);
+        seetDatabase.setDraftTopic(seet.getTitle());
         return false;
     }
 
+    
+    // true = Main, false = Drafting 
     public boolean body() {
-        String line = Arrays.stream(seet.getMessage()).
-                collect(Collectors.joining());
+        String line = Arrays.stream(seet.getMessage()).collect(Collectors.joining());
         seetDatabase.getDraftLines().add(line);
 
         return false;
     }
 
-    public boolean send() {
+    public boolean send() throws IOException {
 
-        ClientChannel chan = formatter.getChan();
         String draftTopic = seetDatabase.getDraftTopic();
         String userId = user.getName();
         List<String> msgList = seetDatabase.getDraftLines();
-
-        try {
-            chan.send(new Publish(userId, draftTopic, msgList));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        formatter.getChan().send(new Publish(userId, draftTopic, msgList));
+        
 
         seetDatabase.setDraftTopic(null);
         return true;
     }
-
-    
-    
-    
-    
     
     private void setUser() {
         client.inputUser();
@@ -163,19 +118,7 @@ public class AllCommandImplementer {
     boolean finished = false;
     boolean state = true;
 
-    public void loop() {
 
-        while (!finished) {
-
-            try {
-                menuPrinter(state);
-                UserInput userCommand = reader.getCommand();
-                state = processCommand(userCommand);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
    
     public User getUser() {
         return user;
@@ -184,4 +127,30 @@ public class AllCommandImplementer {
     public AllCommandInvoker getInvoker() {
         return invoker;
     }
+    
+    public boolean processCommand(UserInput command) throws IOException{
+        String commandWord = command.getFirstWord();
+        String secondWord = command.getSecondWord();
+        String [] message = command.getMessageWord();
+        
+        
+        if(commandWord.equals("exit")) {
+            System.exit(0);
+        }
+        
+        if(!invoker.getAllCommandsMap().containsKey(commandWord)) {
+            System.out.println("No command recognised");
+            return true;
+        }
+        
+        seet = new AppSeet(secondWord, message);
+        
+        return invoker.runCommands(commandWord);
+    }
+
+    public Reader getReader() {
+        return reader;
+    }
+    
+    
 }
