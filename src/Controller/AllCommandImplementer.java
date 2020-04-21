@@ -93,7 +93,7 @@ public class AllCommandImplementer {
         return true;
     }
     
-    private void setUser() {
+    public void setUser() {
         client.inputUser();
         String name = null;
         try {

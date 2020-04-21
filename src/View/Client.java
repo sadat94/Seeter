@@ -102,7 +102,7 @@ public class Client {
             value = "DM_DEFAULT_ENCODING",
             justification = "When reading console, ignore default encoding warning")
 
-    void run() throws IOException {
+    public void run() throws IOException {
         
         boolean finished = false;
         boolean state = true;
