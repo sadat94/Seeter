@@ -7,7 +7,7 @@ package Controller;
 
 /**
  *
- * @author ss15a
+ * @author ss15adx Sadat Safuan
  */
 public class ComposeSeet implements Command {
     

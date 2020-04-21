@@ -9,12 +9,12 @@ package Model;
  *
  * @author ss15a
  */
-public class AppSeet {
+public class SeetProgram {
     
     private String title;
     private String [] message;
 
-    public AppSeet(String title, String[] message) {
+    public SeetProgram(String title, String[] message) {
         this.title = title;
         this.message = message;
     }

@@ -5,9 +5,13 @@
  */
 package Controller;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
- * @author ss15a
+ * @author ss15adx Sadat Safuan
  */
 public class SendSeet implements Command {
     
@@ -19,7 +23,12 @@ public class SendSeet implements Command {
 
     @Override //Command
     public boolean execute() {
-        return implementer.send();
+        try {
+            return implementer.send();
+        } catch (IOException ex) {
+            Logger.getLogger(SendSeet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return true;
     }
     
 }

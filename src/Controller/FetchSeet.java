@@ -5,11 +5,16 @@
  */
 package Controller;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
- * @author ss15a
+ * @author ss15adx Sadat Safuan
  */
 public class FetchSeet implements Command{
+    
     private AllCommandImplementer implementer;
     
      public FetchSeet(AllCommandImplementer implementer) {
@@ -18,7 +23,15 @@ public class FetchSeet implements Command{
     
     @Override
     public boolean execute() {
-        return implementer.fetch();
+        try {
+            return implementer.fetch();
+        } catch (IOException ex) {
+            Logger.getLogger(FetchSeet.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(FetchSeet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return true;
     }
     
 }

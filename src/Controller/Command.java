@@ -6,7 +6,7 @@
 package Controller;
 /**
  *
- * @author ss15a
+ * @author ss15adx Sadat Safuan
  */
 public interface Command {
     boolean execute();  

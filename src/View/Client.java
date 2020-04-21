@@ -66,7 +66,6 @@ public class Client {
     private String host;
     private int port;
     
-    private User user1;
     
     private static AllCommandInvoker invoker;
     private static AllCommandImplementer implementer;
@@ -136,7 +135,7 @@ public class Client {
 
     public void registerCommands() {
        
-       implementer.getInvoker().addAppCommands();    
+       implementer.getInvoker().allCommandsRegister();    
     }
     
 }

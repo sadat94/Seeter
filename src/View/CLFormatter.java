@@ -1,9 +1,11 @@
 package View;
 
 
+import Internationalisation.Internationalisation;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ResourceBundle;
 import sep.seeter.net.channel.ClientChannel;
 import sep.seeter.net.message.Message;
 
@@ -14,9 +16,12 @@ import sep.seeter.net.message.Message;
 public class CLFormatter {
 
   static ClientChannel chan;  // Client-side channel for talking to a Seeter server
+  public static Internationalisation internationalise;
+  private static ResourceBundle strings;
 
   public CLFormatter(String host, int port) {
     this.chan = new ClientChannel(host, port);
+    this.internationalise = new Internationalisation();
   }
 
   /* Interact with Seeter server */
@@ -33,32 +38,55 @@ public class CLFormatter {
   
   
    public static String formatWelcome() {
-        return "\nWelcome!\n"
-                + "Please provide your userName";
+       return "\nWelcome!\n"
+            + "please provide your userName";      
+         
+  //   return "\n" + internationalise.welcome      
+    //             + internationalise.username;    //Runtime error
+         
+              
     }
 
   static String formatSplash(String user) {
-    return "\nHello " + user + "!\n"
-        + "Note:  Commands can be abbreviated to any prefix, "
-        + "e.g., fe [mytopic].\n";
+   // return "\nHello " + user + "!\n"
+     //   + "Note:  Commands can be abbreviated to any prefix, "
+       // + "e.g., fe [mytopic].\n";
+       
+       return "\n" + internationalise.hello + user + "!\n"
+                   + internationalise.note
+                   + internationalise.example + "\n";  
   }
 
   public static String formatMainMenuPrompt() {
-    return "\n[Main] Enter command: "
-        + "fetch [mytopic], "
-        + "compose [mytopic], "
-        + "exit"
-        + "\n> ";
+    //return "\n[Main] Enter command: "
+      //  + "fetch [mytopic], "
+       // + "compose [mytopic], "
+      //  + "exit"
+      //  + "\n> ";
+      
+      return "\n" + internationalise.enter_command 
+                  + internationalise.fetch
+                  + internationalise.compose
+                  + internationalise.exit
+            + "\n> ";
   }
 
   public static String formatDraftingMenuPrompt(String topic,
       List<String> lines) {
-    return "\nDrafting: " + formatDrafting(topic, lines)
-        + "\n[Drafting] Enter command: "
-        + "body [mytext], "
-        + "send, "
-        + "exit"
-        + "\n> ";
+  //  return "\nDrafting: " + formatDrafting(topic, lines)
+  //      + "\n[Drafting] Enter command: "
+  //      + "body [mytext], "
+  //      + "send, "
+  //      + "exit"
+  //      + "\n> ";
+  
+      return "\n" + internationalise.drafting + formatDrafting(topic, lines) +
+             "\n" + internationalise.drafting_enter_command
+                  + internationalise.body
+                  + internationalise.send
+                  + internationalise.exit
+                  + "\n> ";   
+  
   }
 
   public static String formatDrafting(String topic, List<String> lines) {
@@ -76,7 +104,7 @@ public class CLFormatter {
 
   public static String formatFetched(String topic, List<String> users,
       List<String> fetched) {
-    StringBuilder b = new StringBuilder("Fetched: #");
+    StringBuilder b = new StringBuilder(internationalise.fetched);
     b.append(topic);
     Iterator<String> it = fetched.iterator();
     for (String user : users) {

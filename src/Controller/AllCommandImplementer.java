@@ -4,7 +4,8 @@
  * and open the template in the editor.
  */
 package Controller;
-import Model.AppSeet;
+import Internationalisation.Internationalisation;
+import Model.SeetProgram;
 import Model.User;
 import Model.UserInput;
 import View.CLFormatter;
@@ -22,25 +23,29 @@ import sep.seeter.net.message.SeetsReq;
 
 /**
  *
- * @author ss15a
+ * @author ss15adx Sadat Safuan
  */
 public class AllCommandImplementer {
     
-    private Client client;
+    private final Client client;
     private CLFormatter formatter;
     private User user;
-    private Reader reader;
-    private AllCommandInvoker invoker;
-    private AppSeet seet;
-    private SeetDraftDatabase seetDatabase;
+    private final Reader reader;
+    private final AllCommandInvoker invoker;
+    private SeetProgram seet;
+    private final SeetDraftDatabase seetDatabase;
+    private static Internationalisation internationalise;
  
 
     public AllCommandImplementer (Client newClient) {
+        
         client = newClient;
         seetDatabase = new SeetDraftDatabase();
         reader = new Reader();
         setCLFormatter();
         invoker = new AllCommandInvoker(this);
+        this.internationalise = new Internationalisation();
+        
     } 
     
     public void menuPrinter(Boolean state) { 
@@ -52,6 +57,7 @@ public class AllCommandImplementer {
     }
   
     public boolean fetch() throws IOException, ClassNotFoundException {
+        
         ClientChannel clientChannel = formatter.getChan();
         clientChannel.send(new SeetsReq(seet.getTitle()));
         SeetsReply rep = null;
@@ -104,7 +110,7 @@ public class AllCommandImplementer {
         formatter = null;
 
         if (user.getName().isEmpty() || user.getHost().isEmpty()) {
-            System.err.println("User/host has not been set.");
+            System.err.println(internationalise.user_notset);
             System.exit(1);
         }
 
@@ -129,6 +135,7 @@ public class AllCommandImplementer {
     }
     
     public boolean processCommand(UserInput command) throws IOException{
+        
         String commandWord = command.getFirstWord();
         String secondWord = command.getSecondWord();
         String [] message = command.getMessageWord();
@@ -139,11 +146,11 @@ public class AllCommandImplementer {
         }
         
         if(!invoker.getAllCommandsMap().containsKey(commandWord)) {
-            System.out.println("No command recognised");
+            System.out.println(internationalise.unrecognised);
             return true;
         }
         
-        seet = new AppSeet(secondWord, message);
+        seet = new SeetProgram(secondWord, message);
         
         return invoker.runCommands(commandWord);
     }
