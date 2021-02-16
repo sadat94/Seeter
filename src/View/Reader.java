@@ -12,7 +12,7 @@ import java.io.InputStreamReader;
 
 /**
  *
- * @author ss15a
+ * @author ss15adx Sadat Safuan 
  */
 public class Reader {
     
